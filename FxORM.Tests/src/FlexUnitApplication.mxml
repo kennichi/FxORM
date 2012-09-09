@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This is an auto generated file and is not intended for modification. -->
+
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:flexui="flexunit.flexui.*" creationComplete="onCreationComplete()">
+	<fx:Script>
+		<![CDATA[
+        import tests.operations.save.primitives.tests.SaveSimpleObjectTest;
+        import tests.operations.save.primitives.tests.SaveSimpleObjectInheritanceTest;
+        import tests.operations.save.primitives.tests.SaveIntValuesTest;
+        import tests.operations.save.primitives.tests.SaveDateTest;
+        import tests.operations.save.primitives.tests.SaveBooleanTest;
+        import tests.operations.save.references.tests.SaveReferenceChainTest;
+        import tests.operations.save.references.tests.SaveNullReferenceTest;
+        import tests.operations.save.references.tests.SaveInheritanceWithReferencesTest;
+        import tests.operations.save.collections.tests.PrimitivesCollectionTest;
+        import tests.operations.save.collections.tests.SaveNullCollectionTest;
+        import tests.operations.save.collections.tests.SaveNewCollectionTest;
+        import tests.operations.save.collections.tests.SaveInheritanceWithCollections;
+        import tests.operations.save.collections.tests.SaveExistingCollectionTest;
+        import tests.operations.save.collections.tests.SaveEmptyCollectionTest;
+
+        public function currentRunTestSuite():Array {
+            var testsToRun:Array = new Array();
+            testsToRun.push(tests.operations.save.collections.SaveEmptyCollectionTest);
+            testsToRun.push(tests.operations.save.collections.SaveExistingCollectionTest);
+            testsToRun.push(tests.operations.save.collections.SaveInheritanceWithCollections);
+            testsToRun.push(tests.operations.save.collections.SaveNewCollectionTest);
+            testsToRun.push(tests.operations.save.collections.SaveNullCollectionTest);
+            testsToRun.push(tests.operations.save.collections.SimpleCollectionTest);
+            testsToRun.push(tests.operations.save.references.SaveInheritanceWithReferencesTest);
+            testsToRun.push(tests.operations.save.references.SaveNullReferenceTest);
+            testsToRun.push(tests.operations.save.references.SaveReferenceChainTest);
+            testsToRun.push(tests.operations.save.primitives.SaveBooleanTest);
+            testsToRun.push(tests.operations.save.primitives.SaveDateTest);
+            testsToRun.push(tests.operations.save.primitives.SaveIntValuesTest);
+            testsToRun.push(tests.operations.save.primitives.SaveSimpleObjectInheritanceTest);
+            testsToRun.push(tests.operations.save.primitives.SaveSimpleObjectTest);
+            return testsToRun;
+        }
+
+
+        private function onCreationComplete():void {
+            testRunner.runWithFlexUnit4Runner(currentRunTestSuite(), "FxORM.Tests");
+        }
+        ]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<flexui:FlexUnitTestRunnerUI id="testRunner">
+	</flexui:FlexUnitTestRunnerUI>
+</s:WindowedApplication>

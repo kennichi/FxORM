@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="flex-dependencies" default="dependency.sql">
+    <dirname property="dependencies.basedir" file="${ant.file.flex-dependencies}"/>
+    <target name="dependency.FxORM.Base">
+        <ant dir="${dependencies.basedir}/FxORM.Base" target="${dependency.target}" inheritAll="false"/>
+    </target>
+    <target name="dependency.FxORM.SQL"
+            depends="dependency.FxORM.Base">
+        <ant dir="${dependencies.basedir}/FxORM.SQL" target="${dependency.target}" inheritAll="false"/>
+    </target>
+	<target name="dependency.FxORM.Tests"
+            depends="dependency.FxORM.SQL">
+        <ant dir="${dependencies.basedir}/FxORM.Tests" target="${dependency.target}" inheritAll="false"/>
+    </target>
+</project>

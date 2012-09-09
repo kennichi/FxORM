@@ -1,0 +1,31 @@
+<project name="FxORM" default="distribute">
+	<import file="flex-dependencies.xml"/>
+	<property name="DEPLOY_SWC_DIR" value="FxORM-deploy"/>
+	
+	<target name="prepare">
+		<delete dir="${DEPLOY_SWC_DIR}" />
+	</target>
+	
+	<target name="distribute" depends="report, metrics" />
+
+	<target name="report" depends="compile, reportWithoutCompilation" description="Compiles, Runs tests and outputs reports" />
+    
+	<target name="compile" description="Compiles source code" depends="prepare">
+    	<antcall target="dependency.FxORM.SQL">
+            <param name="dependency.target" value="distribute"/>
+        </antcall>
+    </target>
+
+	<target name="reportWithoutCompilation" description="Runs tests and outputs reports">
+	    <antcall target="dependency.FxORM.Tests">
+	    	<param name="dependency.target" value="distribute"/>
+	    </antcall>
+	</target>
+	
+	<target name="metrics" depends="compile, reportWithoutCompilation" description="Generates PMD reports and metrics for all projects">
+	    <antcall target="dependency.FxORM.SQL">
+	    	<param name="dependency.target" value="runPMD"/>
+	    </antcall>
+	</target>
+	
+</project>

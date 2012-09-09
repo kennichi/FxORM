@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955"
+			   creationComplete="_onCreationComplete()" minHeight="600" xmlns:adobe="http://www.adobe.com/2009/flexUnitUIRunner">
+	<fx:Script>
+		<![CDATA[
+        import mx.events.FlexEvent;
+
+        import org.flexunit.listeners.AirCIListener;
+        import org.flexunit.listeners.CIListener;
+        import org.flexunit.listeners.UIListener;
+        import org.flexunit.runner.FlexUnitCore;
+
+        import tests.AllTestsSuite;
+
+        import tests.operations.save.collections.tests.SaveEmptyCollectionTest;
+        import tests.operations.save.collections.tests.SaveExistingCollectionTest;
+        import tests.operations.save.collections.tests.SaveInheritanceWithCollections;
+        import tests.operations.save.collections.tests.SaveNewCollectionTest;
+        import tests.operations.save.collections.tests.SaveNullCollectionTest;
+        import tests.operations.save.collections.tests.PrimitivesCollectionTest;
+        import tests.operations.save.references.tests.SaveInheritanceWithReferencesTest;
+        import tests.operations.save.references.tests.SaveNullReferenceTest;
+        import tests.operations.save.references.tests.SaveReferenceChainTest;
+        import tests.operations.save.primitives.tests.SaveBooleanTest;
+        import tests.operations.save.primitives.tests.SaveDateTest;
+        import tests.operations.save.primitives.tests.SaveIntValuesTest;
+        import tests.operations.save.primitives.tests.SaveSimpleObjectInheritanceTest;
+        import tests.operations.save.primitives.tests.SaveSimpleObjectTest;
+
+        private function _onCreationComplete():void {
+            runTests();
+        }
+
+        public function currentRunTestSuite():Array {
+            var testsToRun:Array = new Array();
+            testsToRun.push(AllTestsSuite)
+            return testsToRun;
+        }
+
+        public function runTests():void {
+            var core:FlexUnitCore = new FlexUnitCore();
+
+            /**If you don't need graphical test results, comment out the line below and the MXML declaring
+             the TestRunnerBase. **/
+            core.addListener(new UIListener(uiListener));
+            core.addListener(new AirCIListener());
+
+            /**If you would like to see text output in verbose mode, umcomment either of the follow listeners **/
+                //core.addListener( new TraceListener() ); - For AS3 Projects
+                //core.addListener( TextListener.getDefaultTextListener( LogEventLevel.DEBUG ) ); - For Flex Projects
+            core.run.apply(core, currentRunTestSuite());
+        }
+        ]]>
+	</fx:Script>
+	<adobe:TestRunnerBase id="uiListener"
+						  width="100%" height="100%"/>
+</s:Application>

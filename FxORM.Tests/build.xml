@@ -1,0 +1,6 @@
+<project name="FxORM.Tests" basedir="." default="distribute">
+    <import file="../flex-build-common.xml"/>
+    <target name="precompile_test" depends="precompile_test_air" />
+    <target name="exportTestReport" depends="exportTestReport_air" />
+    <target name="distribute" depends="report, cleanup" />
+</project>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<flex-config>
+	<compiler>	
+		<locale>
+	          <locale-element>en_US</locale-element>
+	          <locale-element>de_DE</locale-element>
+	          <locale-element>es_ES</locale-element>
+	          <locale-element>ko_KR</locale-element>
+	          <locale-element>pt_BR</locale-element>
+	          <locale-element>zh_CN</locale-element>
+	    </locale>	
+		<keep-as3-metadata append="true">
+			<name>Table</name>
+			<name>Id</name>
+			<name>Column</name>
+			<name>Transient</name>
+		</keep-as3-metadata>
+		<verbose-stacktraces>true</verbose-stacktraces>	
+	</compiler>
+</flex-config>

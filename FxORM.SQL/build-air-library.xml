@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="FxORM.SQL" basedir="." default="compile">
+	<!-- Define Flex Tasks -->
+	<property name="env" value="local"/>
+
+	<property file="${env}.properties" />
+
+	<taskdef resource="flexTasks.tasks" classpath="${TASKS_DIR}/flexTasks.jar"/>
+
+	<target name="compile" depends="precompile, copyPrecompiledSWCs" />
+
+	<!-- delete and recreate the deploy dir -->
+	<target name="init">
+		<delete dir="${DEPLOY_DIR}" />
+		<mkdir dir="${DEPLOY_DIR}" />
+	</target>
+
+	<!-- Gets the class names of files, thanks to Gregor Kiddie<gkiddie@inpses.co.uk> -->
+	<fileset dir="${SRC_DIR}" id="src.dir.fileset" />
+	<pathconvert property="project.classes" pathsep=" " refid="src.dir.fileset">
+		<compositemapper>
+			<chainedmapper>
+				<globmapper from="${SRC_DIR}/*" to="*" handledirsep="true" />
+				<mapper type="package" from="*.as" to="*" />
+			</chainedmapper>
+			<chainedmapper>
+				<globmapper from="${SRC_DIR}/*" to="*" handledirsep="true" />
+				<mapper type="package" from="*.mxml" to="*" />
+			</chainedmapper>
+		</compositemapper>
+	</pathconvert>
+
+	<!-- Build and output the Main.swf-->
+	<target name="precompile" depends="init">
+        <echo>Base libs dir: ${LIBS_DIR}</echo>
+		<compc debug="${DEBUG}" output="${DEPLOY_DIR}/${APP_NAME}.swc" include-classes="${project.classes}" actionscript-file-encoding="UTF-8"
+			static-rsls="true" 
+			accessible="true" 
+			failonerror="true" 
+			fork="true" 
+			maxmemory="512m">
+			<!-- That was AIR above...-->
+			<source-path path-element="${SRC_DIR}" />
+			<!--<include-sources dir="${src.dir}" includes="*" />-->
+			<compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+				<include name="libs" />
+			</compiler.library-path>
+			<compiler.library-path dir="${LIBS_DIR}" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<compiler.library-path dir="${DEPLOY_SWC_DIR}" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<load-config filename="${FLEX_HOME}/frameworks/air-config.xml" />
+			<load-config filename="${FLEX_CONFIG}" />
+
+			<!-- That is AIR again:-->
+			<external-library-path file="${FLEX_HOME}/frameworks/libs/air/airglobal.swc" append="true"/>
+		</compc>
+	</target>
+
+	<!-- Copy SWC to Global Deploy Dir: -->
+	<target name="copyPrecompiledSWCs">
+		<echo>Copying to Global Deploy SWC Directory...</echo>
+		<copy todir="${DEPLOY_SWC_DIR}" includeemptydirs="false" overwrite="true">
+			<fileset dir="${DEPLOY_DIR}" />
+		</copy>
+		<echo>Copied to Global Deploy SWC Directory...</echo>
+	</target>
+</project>

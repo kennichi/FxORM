@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="FxORM.Base" basedir="." default="distribute">
+    <import file="../flex-build-common.xml"/>
+    <target name="precompile" depends="precompile_air" />
+</project>

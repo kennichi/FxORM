@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testrun name="" >
+<testsuite  name="Default Test Suite" project="FxORM.Tests">
+<testsuite name="tests.operations.save.collections:SaveEmptyCollectionTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.collections:SaveExistingCollectionTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.collections:SaveInheritanceWithCollections" type="testcaseclass"/>
+<testsuite name="tests.operations.save.collections:SaveNewCollectionTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.collections:SaveNullCollectionTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.collections:SimpleCollectionTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.references:SaveInheritanceWithReferencesTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.references:SaveNullReferenceTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.references:SaveReferenceChainTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.simple:SaveBooleanTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.simple:SaveDateTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.simple:SaveIntValuesTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.simple:SaveSimpleObjectInheritanceTest" type="testcaseclass"/>
+<testsuite name="tests.operations.save.simple:SaveSimpleObjectTest" type="testcaseclass"/>
+</testsuite>
+</testrun>

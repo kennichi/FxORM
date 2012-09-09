@@ -2,8 +2,23 @@
 bin-debug/
 bin-release/
 
+# Idea
+.idea/
+*.iml
+
+# Ant reporting folders
+out/
+FxORM-deploy/
+FxORM-reports/
+
 # Project property files
 .actionScriptProperties
 .flexProperties
+.fxpProperties
+.flexLibProperties
+.actionScriptProperties
 .settings/
 .project
+# staff
+.DS_Store
+Setting up Jenkins.rst

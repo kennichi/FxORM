@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="common" basedir="." default="distribute">
+	
+	<import file="flex-dependencies.xml"/>
+	
+	<property file="${dependencies.basedir}/common.properties" />
+
+	<taskdef resource="flexTasks.tasks" classpath="${ROOT_DIR}//flexTasks.jar" />
+
+	<target name="compile" depends="precompile, copy_precompiled_swcs" />
+	<target name="distribute_with_dependencies" depends="distribute.dependencies, distribute" />
+	<target name="distribute" depends="compile, cleanup" />
+	
+	<!-- compile all dependencies -->
+	<target name="distribute.dependencies">
+		<antcall target="dependency.${ant.project.name}">
+			<param name="dependency.target" value="distribute"/>
+		</antcall>
+	</target>
+
+	<!-- delete and recreate the deploy dir -->
+	<target name="init">
+		<echo message="initializing ${ant.project.name}" />
+		<delete dir="${DEPLOY_DIR}" />
+		<mkdir dir="${DEPLOY_DIR}" />
+		<mkdir dir="${DEPLOY_DIR}/${ant.project.name}" />
+		<mkdir dir="${DEPLOY_SWC_DIR}" />
+		<mkdir dir="${REPORTS_DIR}" />
+		<delete dir="${UNIT_TESTS_REPORTS_DIR}" />
+		<mkdir dir="${UNIT_TESTS_REPORTS_DIR}" />
+	</target>
+
+	<!-- get class names from files, ignore test and flexUnit files -->
+	<path id="src.dir.fileset">
+		<fileset dir="${SRC_DIR}">
+			<exclude name="**/Test*" />
+			<exclude name="**/FlexUnit*" />
+		</fileset>
+	</path>
+	<pathconvert property="project.classes" pathsep=" " refid="src.dir.fileset">
+		<compositemapper>
+			<chainedmapper>
+				<globmapper from="${SRC_DIR}/*" to="*" handledirsep="true" />
+				<mapper type="package" from="*.as" to="*" />
+			</chainedmapper>
+			<chainedmapper>
+				<globmapper from="${SRC_DIR}/*" to="*" handledirsep="true"/>
+				<mapper type="package" from="*.mxml" to="*"  />
+			</chainedmapper>
+		</compositemapper>
+	</pathconvert>
+
+	<!-- build and output the main .swf-->
+	<target name="precompile" depends="init">
+        <echo message="Base libs dir: ${LIBS_DIR}" />
+        <echo message="compiling ${ant.project.name} to ${DEPLOY_DIR} from libs: ${LIBS_DIR}" />
+		<mkdir dir="${LIBS_DIR}" />
+		<!-- xslt to generate flex-config for all iclude-files to save ourselves from writing <include-file ../> for each asset in app -->
+		<xslt in=".flexLibProperties" out="${DEPLOY_DIR}/${ant.project.name}/ant-build-assets-config.xml" style="${ROOT_DIR}/flex-build-assets.xsl">
+		</xslt>
+		<replace file="${DEPLOY_DIR}/${ant.project.name}/ant-build-assets-config.xml" token="$src_dir" value="${ASSETS_DIR}/"/> 
+		<compc fork="true" maxmemory="256m" debug="${DEBUG}" output="${DEPLOY_DIR}/${ant.project.name}.swc" include-classes="${project.classes}" actionscript-file-encoding="UTF-8"
+			directory="false">
+			<source-path path-element="${SRC_DIR}" />
+			<compiler.library-path dir="${FLEX_HOME}/frameworks/libs" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<compiler.library-path dir="${LIBS_DIR}" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<compiler.library-path dir="${DEPLOY_SWC_DIR}" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+			<load-config filename="${DEPLOY_DIR}/${ant.project.name}/ant-build-assets-config.xml" />
+		</compc>
+		<!--<delete file="${DEPLOY_DIR}/ant-build-assets-config.xml"></delete>-->
+	</target>
+	<!-- build and output the main .swf-->
+	<target name="precompile_air" depends="init">
+        <echo message="Base libs dir: ${LIBS_DIR}" />
+        <echo message="compiling ${ant.project.name} to ${DEPLOY_DIR} from libs: ${LIBS_DIR}" />
+		<mkdir dir="${LIBS_DIR}" />
+		<!-- xslt to generate flex-config for all iclude-files to save ourselves from writing <include-file ../> for each asset in app -->
+		<xslt in=".flexLibProperties" out="${DEPLOY_DIR}/${ant.project.name}/ant-build-assets-config.xml" style="${ROOT_DIR}/flex-build-assets.xsl">
+		</xslt>
+		<replace file="${DEPLOY_DIR}/${ant.project.name}/ant-build-assets-config.xml" token="$src_dir" value="${ASSETS_DIR}/"/>
+        <compc fork="true" maxmemory="256m" debug="${DEBUG}" output="${DEPLOY_DIR}/${ant.project.name}.swc" include-classes="${project.classes}" actionscript-file-encoding="UTF-8"
+               static-rsls="true"
+               accessible="true"
+               failonerror="true"
+               directory="false">
+            <source-path path-element="${SRC_DIR}" />
+            <compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+                <include name="libs" />
+            </compiler.library-path>
+            <compiler.library-path dir="${LIBS_DIR}" append="true">
+                <include name="*.swc" />
+            </compiler.library-path>
+            <compiler.library-path dir="${DEPLOY_SWC_DIR}" append="true">
+                <include name="*.swc" />
+            </compiler.library-path>
+            <load-config filename="${FLEX_HOME}/frameworks/air-config.xml" />
+            <load-config filename="${DEPLOY_DIR}/${ant.project.name}/ant-build-assets-config.xml" />
+            <load-config filename="${basedir}/flex-config.xml" />
+            <external-library-path file="${FLEX_HOME}/frameworks/libs/air/airglobal.swc" append="true"/>
+        </compc>
+		<!--<delete file="${DEPLOY_DIR}/ant-build-assets-config.xml"></delete>-->
+	</target>
+
+
+	<!-- Build and output the Main.swf-->
+	<target name="precompile_web" depends="init, wrap_html">
+		<echo message="compiling web app ${ant.project.name}" />
+
+		<mxmlc fork="true" maxmemory="256m" file="${SRC_DIR}/${ant.project.name}.mxml" output="${DEPLOY_DIR}/${ant.project.name}.swf" debug="${DEBUG}">
+			<compiler.library-path dir="${LIBS_DIR}" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<compiler.library-path dir="${DEPLOY_SWC_DIR}" append="true">
+				<include name="*.swc" />
+			</compiler.library-path>
+			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+			<source-path path-element="${FLEX_HOME}/frameworks" />
+		</mxmlc>
+		
+		<copy todir="${WEB_DEPLOY_DIR}" includeemptydirs="false" overwrite="true">
+			<fileset dir="${DEPLOY_DIR}" />
+		</copy>
+	</target>
+
+    <target name="precompile_test" depends="init">
+        <echo message="compiling test app ${ant.project.name}" />
+        <mxmlc fork="true" maxmemory="256m"
+               file="${SRC_DIR}/${TESTRUNNER}.mxml" keep-generated-actionscript="false" output="${DEPLOY_DIR}/${ant.project.name}.swf">
+            <compiler.library-path dir="${LIBS_DIR}" append="true">
+                <include name="*.swc" />
+            </compiler.library-path>
+            <compiler.library-path dir="${DEPLOY_SWC_DIR}" append="true">
+                <include name="*.swc" />
+            </compiler.library-path>
+            <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+            <source-path path-element="${FLEX_HOME}/frameworks" />
+            <compiler.verbose-stacktraces>true</compiler.verbose-stacktraces>
+        </mxmlc>
+    </target>
+    <target name="precompile_test_air" depends="init">
+        <echo message="compiling test app ${ant.project.name}" />
+        <mxmlc fork="true"
+               maxmemory="256m"
+               configname="air"
+               failonerror="true"
+               file="${SRC_DIR}/${TESTRUNNER}.mxml"
+               keep-generated-actionscript="false"
+               output="${DEPLOY_DIR}/${ant.project.name}.swf">
+            <source-path path-element="${SRC_DIR}" />
+            <compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+                <include name="libs" />
+            </compiler.library-path>
+            <compiler.library-path dir="${LIBS_DIR}" append="true">
+                <include name="*.swc" />
+            </compiler.library-path>
+            <compiler.library-path dir="${DEPLOY_SWC_DIR}" append="true">
+                <include name="*.swc" />
+            </compiler.library-path>
+            <load-config filename="${FLEX_HOME}/frameworks/air-config.xml" />
+            <load-config filename="${basedir}/flex-config.xml" />
+            <external-library-path file="${FLEX_HOME}/frameworks/libs/air/airglobal.swc" append="true"/>
+            <compiler.verbose-stacktraces>true</compiler.verbose-stacktraces>
+            <compiler.headless-server>true</compiler.headless-server>
+        </mxmlc>
+
+    </target>
+	<!-- Copy SWC to Global Deploy Dir: -->
+	<target name="copy_precompiled_swcs">
+		<echo>Copying to Global Deploy SWC Directory...</echo>
+		<copy todir="${DEPLOY_SWC_DIR}" includeemptydirs="false" overwrite="true">
+			<fileset dir="${DEPLOY_DIR}" />
+		</copy>
+		<echo>Copied to Global Deploy SWC Directory...</echo>
+	</target>
+	
+	<!-- clean up after ourselves -->
+	<target name="cleanup">
+		<delete dir="${DEPLOY_DIR}" />
+	</target>
+
+	<!-- the supported html-wrapper task does not allow to use index.template.html from html-template dir -->
+	<macrodef name="generate_html_wrapper" description="Generates HTML Wrapper using custom template">
+		<attribute name="file" />
+		<attribute name="title" />
+		<attribute name="application" />
+		<attribute name="swf" />
+		<attribute name="width" />
+		<attribute name="height" />
+		<attribute name="bgcolor" />
+		<attribute name="version-major" />
+		<attribute name="version-minor" />
+		<attribute name="version-revision" />
+		<attribute name="output" />
+
+		<sequential>
+			<copy todir="@{output}">
+				<fileset dir="html-template" />
+			</copy>
+			<rename dest="@{output}/@{file}" src="@{output}/index.template.html" />
+
+			<replace file="@{output}/@{file}" token="$${title}" value="@{title}" />
+			<replace file="@{output}/@{file}" token="$${swf}" value="@{swf}" />
+			<replace file="@{output}/@{file}" token="$${width}" value="@{width}" />
+			<replace file="@{output}/@{file}" token="$${height}" value="@{height}" />
+			<replace file="@{output}/@{file}" token="$${bgcolor}" value="@{bgcolor}" />
+			<replace file="@{output}/@{file}" token="$${expressInstallSwf}" value="playerProductInstall.swf" />
+			<replace file="@{output}/@{file}" token="$${application}" value="@{application}" />
+			<replace file="@{output}/@{file}" token="$${version_major}" value="@{version-major}" />
+			<replace file="@{output}/@{file}" token="$${version_minor}" value="@{version-minor}" />
+			<replace file="@{output}/@{file}" token="$${version_revision}" value="@{version-revision}" />
+		</sequential>
+	</macrodef>
+
+	<target name="wrap_html" depends="copyAssets">
+		<generate_html_wrapper title="${ant.project.name}" file="${ant.project.name}.html" height="100%" width="100%" bgcolor="#000000" application="${ant.project.name}" swf="${ant.project.name}" version-major="10" version-minor="0" version-revision="0" output="${DEPLOY_DIR}" />
+	</target>
+
+	<target name="copyRSLs">
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/framework_4.1.0.16076.swf"/>
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/framework_4.1.0.16076.swz"/>
+
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/osmf_flex.4.0.0.13495.swf"/>
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/osmf_flex.4.0.0.13495.swz"/>
+
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/rpc_4.1.0.16076.swf"/>
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/rpc_4.1.0.16076.swz"/>
+
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/spark_4.1.0.16076.swf"/>
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/spark_4.1.0.16076.swz"/>
+
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/sparkskins_4.1.0.16076.swf"/>
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/sparkskins_4.1.0.16076.swz"/>
+
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/textLayout_1.1.0.604.swf"/>
+		<copy todir="${DEPLOY_DIR}" file="${FLEX_HOME}/frameworks/rsls/textLayout_1.1.0.604.swz"/>
+	</target>
+	
+	<target name="ASSETS_DIR.check">
+	    <condition property="ASSETS_DIR.exists">
+	      <available file="${ASSETS_DIR}" type="dir"/>
+	    </condition>
+	</target>
+
+	<target name="copyAssets" depends="ASSETS_DIR.check" if="ASSETS_DIR.exists">
+		<delete dir="${DEPLOY_DIR}/assets" failOnError="false" includeEmptyDirs="true" />
+		<mkdir dir="${DEPLOY_DIR}/assets" />
+		<copy todir="${DEPLOY_DIR}/assets" includeemptydirs="true" overwrite="true">
+			<fileset dir="${ASSETS_DIR}" >
+				<exclude name="*.as"/>
+				<exclude name="*.mxml"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="defineFlexUnitTask">
+		<taskdef resource="flexUnitTasks.tasks" classpath="${BUILD_LIBS}/${FLEX_UNIT_TASKS_FILENAME}" />
+	</target>
+	
+	<target name="exportTestReport">
+		<flexunit 	swf="${DEPLOY_DIR}/${ant.project.name}.swf" 
+					toDir="${UNIT_TESTS_REPORTS_DIR}" 
+					haltonfailure="false" 
+					verbose="true" 
+					localTrusted="true" 
+					headless="false"/>
+	</target>
+
+	<target name="exportTestReport_air">
+		<flexunit 	swf="${DEPLOY_DIR}/${ant.project.name}.swf"
+                    player="air"
+                    toDir="${UNIT_TESTS_REPORTS_DIR}"
+					haltonfailure="false"
+					verbose="true"
+					localTrusted="true"
+					headless="false"/>
+	</target>
+	
+	<target name="test" depends="defineFlexUnitTask, precompile_test, exportTestReport" />
+	<property name="flexpmd.version" value="1.2" />
+	<property name="flexpmd.dir" value="${BUILD_LIBS}" />
+	<path id="flexpmd.base">
+		<pathelement location="${flexpmd.dir}/as3-parser-${flexpmd.version}.jar" />
+		<pathelement location="${flexpmd.dir}/as3-parser-api-${flexpmd.version}.jar" />
+		<pathelement location="${flexpmd.dir}/as3-plugin-utils-${flexpmd.version}.jar" />
+		<pathelement location="${flexpmd.dir}/flex-pmd-files-${flexpmd.version}.jar" />
+		<pathelement location="${flexpmd.dir}/pmd-4.2.5.jar" />
+		<pathelement location="${flexpmd.dir}/dom4j-1.6.1.jar" />
+	</path>
+	
+	<target name="report" depends="test">
+		
+		<taskdef name="cpd" classname="com.adobe.ac.cpd.ant.FlexCpdAntTask" classpath="${BUILD_LIBS}/flex-pmd-cpd-ant-task-${flexpmd.version}.jar">
+			<classpath>
+				<path refid="flexpmd.base" />
+				<pathelement location="${BUILD_LIBS}/flex-pmd-cpd-${flexpmd.version}.jar" />
+			</classpath>
+		</taskdef>
+		
+		<cpd minimumTokenCount="50" outputFile="${REPORTS_DIR}/cpd.xml">
+			<fileset dir="${ROOT_DIR}">
+				<include name="**/*.as" />
+				<include name="**/*.mxml" />
+				<exclude name="flex-components/**/*.as"/>
+				<exclude name="flex-components/**/*.mxml"/>
+			</fileset>
+		</cpd>
+	</target>
+	
+
+	<target name="runPMD">
+
+	    <taskdef name="pmd"
+			classname="com.adobe.ac.pmd.ant.FlexPmdAntTask"
+			classpath="${flexpmd.dir}/flex-pmd-ant-task-${flexpmd.version}.jar">
+	        <classpath>
+	        	<path refid="flexpmd.base" />
+	        	
+	            <pathelement location="${flexpmd.dir}/flex-pmd-ruleset-api-${flexpmd.version}.jar"/>
+	            <pathelement location="${flexpmd.dir}/flex-pmd-ruleset-${flexpmd.version}.jar"/>
+	            <pathelement location="${flexpmd.dir}/flex-pmd-core-${flexpmd.version}.jar"/>
+	            <pathelement location="${flexpmd.dir}/commons-lang-2.4.jar"/>
+	            <pathelement location="${flexpmd.dir}/plexus-utils-1.0.2.jar"/>
+	        </classpath>
+	    </taskdef>
+		<taskdef name="metrics" classname="com.adobe.ac.pmd.metrics.ant.FlexMetricsAntTask"
+		       classpath="${flexpmd.dir}/flex-pmd-metrics-ant-task-${flexpmd.version}.jar">
+		      <classpath>
+		      	<path refid="flexpmd.base" />
+		      	<pathelement location="${flexpmd.dir}/flex-pmd-metrics-${flexpmd.version}.jar" />
+		        <pathelement location="${flexpmd.dir}/commons-lang-2.4.jar" />
+				<pathelement location="${flexpmd.dir}/flex-pmd-ruleset-api-${flexpmd.version}.jar" />
+		      </classpath>
+		</taskdef> 
+		
+		<mkdir dir="${PMD_REPORT_DIR}" />
+		<pmd 
+			sourceDirectory="${SRC_DIR}" 
+			outputDirectory="${PMD_REPORT_DIR}"
+		 	ruleSet="${ROOT_DIR}/pmd.rule.set.xml"/>
+		<metrics sourcedirectory="${SRC_DIR}" outputfile="${PMD_REPORT_DIR}/javancss.xml" />
+		
+	</target>
+</project>
