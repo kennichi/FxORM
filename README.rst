@@ -392,7 +392,7 @@ Then update the properties you want to overwrite, and finally, call **car.save()
 However, if you are willing to override all the properties of an object, just call save() method on the object.
 
 
-.. _how_to_implement_ipersistenobject:
+.. _how_to_implement_ipersistentobject:
 How to implement IPersistentObject
 ---------------------------------------------------------------------------
 
@@ -401,9 +401,9 @@ Please refer to the  **PersistentObject**'s source code to see how to implement 
 
 Basically, what you need to do is:
 
- # instantiate an instance of **ReferenceContext** in your constructor/init method, and store it as a field of your object (or use any other injection way). For each **IPersistentObject** there should be its own **ReferenceContext** (the one-to-one relationship).
- # delegate method calls of **IPersistentObject** to **ReferenceContext**. Mark **objectId** getter with [Id] metadata tag.
- # instead of calling **getReference**, **setReference**, **setPrimitiveValue**, **getCollection**, **setCollection** in your getters setters, as we did in examples above, delegate to the corresponding methods of **ReferenceContext**.
+ * instantiate an instance of **ReferenceContext** in your constructor/init method, and store it as a field of your object (or use any other injection way). For each **IPersistentObject** there should be its own **ReferenceContext** (the one-to-one relationship).
+ * delegate method calls of **IPersistentObject** to **ReferenceContext**. Mark **objectId** getter with [Id] metadata tag.
+ * instead of calling **getReference**, **setReference**, **setPrimitiveValue**, **getCollection**, **setCollection** in your getters setters, as we did in examples above, delegate to the corresponding methods of **ReferenceContext**.
 
 It is a good idea to create one such class and extend it by other classes.
 
