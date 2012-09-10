@@ -120,7 +120,7 @@ Make all classes which need to be stored in the database extend **IPersistentObj
 
 The easiest way to do this is to extend PersistentObject class.
 But you can add your own implementation of the interface if you want.
-See :ref:`how-to-implement-ipersistentobject`.
+See :ref:`How to Implement IPersistentObject <how-to-implement-ipersistentobject>`
 
 4.[Table] metadata
 ############################################################
@@ -154,8 +154,8 @@ By **primitive** we mean properties which can be stored in a single cell of a da
 
 You have two choices of enabling primitive properties to be mapped to the database:
 
- # Make them **Bindable** (simply by either adding **[Bindable]** to the fields/properties, or by marking the owner class with **[Bindable]** metadata tag.
- # Define getter and setter for the field and call **setPrimitiveValue** in the setter.
+ * Make them **Bindable** (simply by either adding **[Bindable]** to the fields/properties, or by marking the owner class with **[Bindable]** metadata tag.
+ * Define getter and setter for the field and call **setPrimitiveValue** in the setter.
 
 Here is an example of these approaches:
 
