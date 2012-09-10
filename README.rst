@@ -154,7 +154,10 @@ By **primitive** we mean properties which can be stored in a single cell of a da
 
 You have two choices of enabling primitive properties to be mapped to the database:
 
- # Make them **Bindable** (simply by either adding **[Bindable]** to the fields/properties, or by marking the owner class with **[Bindable]** metadata tag:
+ # Make them **Bindable** (simply by either adding **[Bindable]** to the fields/properties, or by marking the owner class with **[Bindable]** metadata tag.
+ # Define getter and setter for the field and call **setPrimitiveValue** in the setter.
+
+Here is an example of these approaches:
 
 .. code-block:: as3
 
@@ -163,7 +166,6 @@ You have two choices of enabling primitive properties to be mapped to the databa
  public var endDate : Date;
 
 
- # Define getter and setter for the field and call **setPrimitiveValue** in the setter:
 
 .. code-block:: as3
 
@@ -345,9 +347,9 @@ Working with Backend
 Normally, when working with backend, your application receives objects from the backend in its response. The same object from backend can be present in more than one response.
 
 
-For example, suppose you have two requests:
- # **getAllCars()**;
- # **getOwnedCars(person)**;
+ For example, suppose you have two requests:
+    1 **getAllCars()**;
+    2 **getOwnedCars(person)**;
 
 And your application first invokes request **getAllCars()**.
 Suppose, that the backend returns 4 cars with ids: "1", "2", "3", "4".
