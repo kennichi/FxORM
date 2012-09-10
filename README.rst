@@ -120,7 +120,7 @@ Make all classes which need to be stored in the database extend **IPersistentObj
 
 The easiest way to do this is to extend PersistentObject class.
 But you can add your own implementation of the interface if you want.
-See :ref:`How to Implement IPersistentObject <how-to-implement-ipersistentobject>`
+See how_to_implement_ipersistenobject_:
 
 4.[Table] metadata
 ############################################################
@@ -392,7 +392,7 @@ Then update the properties you want to overwrite, and finally, call **car.save()
 However, if you are willing to override all the properties of an object, just call save() method on the object.
 
 
-.. _how-to-implement-ipersistentobject:
+.. _how_to_implement_ipersistenobject:
 How to implement IPersistentObject (without extending **PersistentObject**)
 ---------------------------------------------------------------------------
 
