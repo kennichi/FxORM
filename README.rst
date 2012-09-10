@@ -21,7 +21,6 @@ Example of Mapped Object
 
  [Table("persons")]
  public class Person extends PersistentObject {
-     private var _garage:Garage;
      private var _friends:ArrayCollection;
 
      [Column]
