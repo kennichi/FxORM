@@ -120,7 +120,7 @@ Make all classes which need to be stored in the database extend **IPersistentObj
 
 The easiest way to do this is to extend PersistentObject class.
 But you can add your own implementation of the interface if you want.
-See how_to_implement_ipersistenobject_:
+See how_to_implement_ipersistentobject_:
 
 4.[Table] metadata
 ############################################################
