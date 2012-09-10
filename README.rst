@@ -393,7 +393,7 @@ However, if you are willing to override all the properties of an object, just ca
 
 
 .. _how_to_implement_ipersistenobject:
-How to implement IPersistentObject (without extending **PersistentObject**)
+How to implement IPersistentObject
 ---------------------------------------------------------------------------
 
 If you prefer not to extend **PersistentObject**, you can implement **IPersistentObject**.
